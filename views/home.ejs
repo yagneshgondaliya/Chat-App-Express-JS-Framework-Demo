@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title itemprop="name">Chat Application</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/chat.css">
+    <!-- <style type="text/css">
+        
+    </style> -->
+</head>
+<body>
+    <div id="snippetContent"> 
+        <main class="content">
+            <div class="container p-0"> 
+                <div class="card">
+                    <div class="row g-0 h-100">
+                        <div class="col-12 col-lg-5 col-xl-3 border-right"> 
+                            <% for(var i=0; i<users.length; i++) {%>
+                                <a href="#" class="list-group-item list-group-item-action border-0 select-user" data-id="<%= users[i].id %>" data-name="<%= users[i].name %>">
+                                    <div class="badge bg-success float-right d-none new-message user-message-id-<%= users[i].id %>">New Message</div>
+                                    <div class="d-flex align-items-start">
+                                        <img src="https://ui-avatars.com/api/?name=John+Doe" class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40" />
+                                        <div class="flex-grow-1 ml-3">
+                                            <%= users[i].name %>
+                                            <div class="small"><span class="fa fa-circle chat-offline id_<%= users[i].id %>" data-id="<%= users[i].id %>"></span> </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <% } %>
+                                
+                                <hr class="d-block d-lg-none mt-1 mb-0" />
+                            </div>
+                            <div class="col-12 col-lg-7 col-xl-9 chatbox">
+                                <div class="py-2 px-4 border-bottom d-none user-header d-lg-block">
+                                    <div class="d-flex align-items-center py-1">
+                                        <div class="position-relative"><img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" /></div>
+                                        <div class="flex-grow-1 pl-3">
+                                            <strong class="user-name"></strong>
+                                            <div class="text-muted small"><em>Typing...</em></div>
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="position-relative chat-list">
+                                    <div class="chat-messages p-4">
+                                        <!-- <div class="chat-message-right pb-4">
+                                            <div>
+                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
+                                                <div class="text-muted small text-nowrap mt-2">2:33 am</div>
+                                            </div>
+                                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                                                <div class="font-weight-bold mb-1">You</div>
+                                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
+                                            </div>
+                                        </div> -->
+                                        <!-- <div class="chat-message-left pb-4">
+                                            <div>
+                                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
+                                                <div class="text-muted small text-nowrap mt-2">2:34 am</div>
+                                            </div>
+                                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
+                                                <div class="font-weight-bold mb-1">Sharon Lessman</div>
+                                                Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="flex-grow-0 py-3 px-4 bottom-chatbox border-top">
+                                    <div class="input-group"><input type="text" name="message" id="message" class="form-control" placeholder="Type your message" /> <button class="btn btn-primary send">Send</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main> 
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+        <script>
+            let ip_address = 'localhost';
+            let socket_port = '4000';
+            let socket = io(ip_address + ':' + socket_port);
+            var reciever_id;
+            var user_id = '<%= user_id %>'
+            var is_chat_open = 0;
+            var limit = 10;
+            $(document).ready(function(){
+                
+                socket.emit('userLoggedIn',(user_id));
+                
+                socket.on('getLoggedInUsers',(data)=>{
+                    console.log(data);
+                    for (let i = 0; i < data.length; i++) {
+                        if($('.id_'+data[i].user_id).attr('data-id') == data[i].user_id){
+                            // console.log(data[i].user_id);
+                            $('.id_'+data[i].user_id).addClass('chat-online').removeClass('chat-offline');
+                        }
+                    }
+                });
+            });
+            
+            $(document).on('click','.select-user',function(){
+                is_chat_open = 1;
+                $(".new-message").addClass('d-none');
+                reciever_id = $(this).data('id');
+                console.log(reciever_id);
+                $(".user-name").text($(this).data('name'));
+                var tempData = {userId:user_id,recieverId:reciever_id}
+                // socket.emit('getMyChats',(tempData))
+                
+                $.ajax({
+                    type: "get",
+                    url: "/get-myChats/"+reciever_id,
+                    success: function (response) {
+                        if(response.status == true){
+                            var html = '';
+                            for (let index = response.chats.length; index > 0; index--) {
+                                if(response.chats[index-1].userId == user_id){
+                                    html += '<div class="chat-message-right pb-4">\
+                                        <div>\
+                                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                                            <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                                        </div>\
+                                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                                            <div class="font-weight-bold mb-1">'+response.chats[index-1].User.name+'</div>\
+                                            '+response.chats[index-1].message+'\
+                                        </div>\
+                                    </div>';
+                                }else{
+                                    html += '<div class="chat-message-left pb-4">\
+                                        <div>\
+                                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                                            <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                                        </div>\
+                                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                                            <div class="font-weight-bold mb-1">'+response.chats[index-1].User.name+'</div>\
+                                            '+response.chats[index-1].message+'\
+                                        </div>\
+                                    </div>';
+                                } 
+                            }
+                            $(".chat-messages").html(html);
+                            $(".chat-messages").animate({ scrollTop: $('.chat-messages').prop("scrollHeight")}, 500);
+                        }
+                    }
+                });
+            });
+            
+            $(document).on('click','.send',function(){
+                var message = $("#message").val();
+                var data = {userId:parseInt(user_id),recieverId:reciever_id,message,is_chat_open}
+                if(message != '' && message != undefined){
+                    socket.emit('onMessage',(data))
+                    $("#message").text('').val('');
+                }
+            });
+            
+            socket.on('recieveSenderChatFromServer',(data)=>{
+                var singleMessageChat = '<div class="chat-message-right pb-4">\
+                    <div>\
+                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                        <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                    </div>\
+                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                        <div class="font-weight-bold mb-1">'+data.name+'</div>\
+                        '+data.message+'\
+                    </div>\
+                </div>';
+                
+                $('.chat-messages').append(singleMessageChat);   
+                $(".chat-messages").animate({ scrollTop: $('.chat-messages').prop("scrollHeight")}, 500);                             
+            })
+            
+            socket.on('recieveReciverChatFromServer',(data)=>{
+                // console.log(data.recieverId,"SERVER WALA");
+                // console.log(reciever_id,"JQUERY WALA");
+                if(is_chat_open == 1 && data.userId == reciever_id){
+                    var singleMessageChat = '<div class="chat-message-left pb-4">\
+                        <div>\
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                            <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                        </div>\
+                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                            <div class="font-weight-bold mb-1">'+data.name+'</div>\
+                            '+data.message+'\
+                        </div>\
+                    </div>';
+                    $('.chat-messages').append(singleMessageChat);
+                    $(".chat-messages").animate({ scrollTop: $('.chat-messages').prop("scrollHeight")}, 500);
+                }else{
+                    $('.user-message-id-'+data.userId).removeClass('d-none')
+                }
+            });
+            
+            
+            socket.on('onUserDisconnection',(data)=>{
+                $('.id_'+data).addClass('chat-offline').removeClass('chat-online');
+            });
+            
+            $('.chat-messages').scroll(function() {
+                var pos = $('.chat-messages').scrollTop();
+                if (pos == 0) {
+                    limit += 10;
+                    $.ajax({
+                        type: "get",
+                        url: "/get-myChats/"+reciever_id+'/'+limit,
+                        success: function (response) {
+                            if(response.status == true){
+                                var html = '';
+                                for (let index = response.chats.length; index > 0; index--) {
+                                    if(response.chats[index-1].userId == user_id){
+                                        html += '<div class="chat-message-right pb-4">\
+                                            <div>\
+                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                                                <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                                            </div>\
+                                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                                                <div class="font-weight-bold mb-1">'+response.chats[index-1].User.name+'</div>\
+                                                '+response.chats[index-1].message+'\
+                                            </div>\
+                                        </div>';
+                                    }else{
+                                        html += '<div class="chat-message-left pb-4">\
+                                            <div>\
+                                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                                                <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                                            </div>\
+                                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                                                <div class="font-weight-bold mb-1">'+response.chats[index-1].User.name+'</div>\
+                                                '+response.chats[index-1].message+'\
+                                            </div>\
+                                        </div>';
+                                    } 
+                                }
+                                $(".chat-messages").html(html);                           
+                            }
+                        }
+                    });
+                }
+            });
+            
+            
+        </script>
+    </body>
+    </html>

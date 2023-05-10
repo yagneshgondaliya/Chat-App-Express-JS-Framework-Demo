@@ -1,0 +1,191 @@
+ <script>
+        $(document).ready(function(){
+            let ip_address = 'localhost';
+            let socket_port = '3000';
+            let socket = io(ip_address + ':' + socket_port);
+            
+            socket.emit('adminGetsOnline');
+            socket.on('loggedInUsers',(data)=>{
+                for (let i = 0; i < data.length; i++) {
+                    if($('.id_'+data[i].user_id).attr('data-id') == data[i].user_id){
+                        // console.log(data[i].user_id);
+                        $('.id_'+data[i].user_id).addClass('chat-online').removeClass('chat-offline');
+                    }
+                }
+            });
+            
+            socket.on('userLogout',(data)=>{
+                $('.id_'+data).addClass('chat-offline').removeClass('chat-online');
+            });
+            
+            socket.on('onUserDisconnection',(data)=>{
+                $('.id_'+data).addClass('chat-offline').removeClass('chat-online');
+            });
+        });
+    </script>
+
+
+    socket.emit('adminGetsOnline');
+                socket.on('loggedInUsers',(data)=>{
+                    for (let i = 0; i < data.length; i++) {
+                        if($('.id_'+data[i].user_id).attr('data-id') == data[i].user_id){
+                            // console.log(data[i].user_id);
+                            $('.id_'+data[i].user_id).addClass('chat-online').removeClass('chat-offline');
+                        }
+                    }
+                });
+                
+                socket.on('userLogout',(data)=>{
+                    $('.id_'+data).addClass('chat-offline').removeClass('chat-online');
+                });
+                
+                socket.on('onUserDisconnection',(data)=>{
+                    $('.id_'+data).addClass('chat-offline').removeClass('chat-online');
+                });
+
+                // const server = app.listen(4000,()=>{
+//     console.log("Node Server Running on port 4000");
+// });
+
+// const io = require('socket.io')(server, {
+//     cors: { origin: "*"}
+// });
+
+// server.listen(3000, () => {
+//     console.log('Socket Server is running on 3000');
+// });
+
+
+// let obj = user_ids.find(function(data) { 
+        //     if(data.user_id == user_id){
+        //         return true;
+        //     }else{
+        //         return false;
+        //     }
+        // });
+
+                //if user does not exists then add it into global user_ids variable
+        // if(obj == undefined){
+        //     user_ids.push({user_id,socketId:socket.id});
+        // }
+
+        var singleMessageChat = '<div class="chat-message-right pb-4">\
+                        <div>\
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+                            <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+                            </div>\
+                            <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+                                <div class="font-weight-bold mb-1"></div>\
+                                Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.\
+                                </div>\
+                                </div>';
+
+                                //Get all chats between user
+        // const chats = await Chat.findAll({
+        //     // offset,
+        //     // limit,
+        //     where:{
+        //         [Op.and]:[{
+        //             userId:[userId,recieverId]
+        //         },{
+        //             recieverId:[userId,recieverId]
+        //         }]  
+        //     },
+        //     include:{
+        //         model:User,
+        //         attributes:['id','name']
+        //     },
+        //     // order:[['createdAt','DESC']]
+        // });
+        
+        // var obj = user_ids.filter(data=>{
+        //     if(data.user_id == userId || data.user_id == recieverId){
+        //         return true;
+        //     }else{
+        //         return false;
+        //     }
+        // });
+        
+        // console.log(obj);
+        
+        //Emits recent message on to both the sender and reciever for frontend
+        // io.sockets.to(obj[0].socketId).to(obj[1].socketId).emit('recieveChatFromServer',(chats));
+
+
+
+
+        // socket.on('recieveChatFromServer',(chats)=>{
+            //     console.log(chats,"CHATS");
+            //     var html = '';
+            //     for (let index = 0; index < chats.length; index++) {
+            //         if(chats[index].userId == user_id){
+            //             html += '<div class="chat-message-right pb-4">\
+            //                 <div>\
+            //                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+            //                     <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+            //                 </div>\
+            //                 <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+            //                     <div class="font-weight-bold mb-1">'+chats[index].User.name+'</div>\
+            //                     '+chats[index].message+'\
+            //                 </div>\
+            //             </div>';
+            //         }else{
+            //             html += '<div class="chat-message-left pb-4">\
+            //                 <div>\
+            //                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />\
+            //                     <div class="text-muted small text-nowrap mt-2">2:33 am</div>\
+            //                 </div>\
+            //                 <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">\
+            //                     <div class="font-weight-bold mb-1">'+chats[index].User.name+'</div>\
+            //                     '+chats[index].message+'\
+            //                 </div>\
+            //             </div>';
+            //         } 
+            //     }
+            //     $(".chat-messages").html(html);
+            // });
+            
+
+
+              // //Function to get chats between logged user and the user selected for chat
+    // async function getChats(userId,recieverId){
+    //     //Get all chats between user and reciever
+    //     var offset = 0;
+    //     var limit = 10;
+    //     const chats = await Chat.findAll({
+    //         // offset,
+    //         // limit,
+    //         where:{
+    //             [Op.and]:[{
+    //                 userId:[userId,recieverId]
+    //             },{
+    //                 recieverId:[userId,recieverId]
+    //             }]  
+    //         },
+    //         include:{
+    //             model:User,
+    //             attributes:['id','name']
+    //         },
+    //         // order:[['createdAt','DESC']]
+    //     });
+    
+    //     //Emit chat to frontend to show chats
+    //     socket.emit('recieveChatFromServer',(chats));
+    // }
+    
+    // //Event called when logged in user selects the other user for chat
+    // socket.on('getMyChats',(data)=>{
+    //     var userId = data.userId;
+    //     var recieverId = data.recieverId;
+    //     // var obj = user_ids.filter(data=>{
+    //     //     if(data.user_id == userId || data.user_id == recieverId){
+    //     //         return true;
+    //     //     }else{
+    //     //         return false;
+    //     //     }
+    //     // })
+    //     // console.log(obj,"ONJEDGGFDTYSF");
+    
+    //     //Calls getChats function above
+    //     getChats(userId,recieverId);
+    // });
